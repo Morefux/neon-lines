@@ -216,9 +216,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     </div>
   </div>
   <button class="btn ghost" id="openSetBtn">设 置</button>
-  <button class="btn ghost mini" id="verToggleBtn" style="margin-top:10px;opacity:.65">切换到正式版</button>
+  <a class="btn ghost mini" href="index.html" style="display:inline-block;text-decoration:none;margin-top:10px;opacity:.85">切换到正式版</a>
 </div>
-<script>(function(){var b=document.getElementById("verToggleBtn");if(!b)return;function go(e){if(e)e.preventDefault();try{if(e&&e.stopPropagation)e.stopPropagation();}catch(_){}location.href="index.html";}b.addEventListener("pointerdown",go);b.addEventListener("click",go);})();</script>
 <input type="file" id="chartFile" accept=".zip,.pez,.json" style="display:none">
 <input type="file" id="skinFile" accept=".zip" style="display:none">
 <div id="toast"></div>
@@ -344,8 +343,8 @@ const fxBl=document.createElement("canvas"),fxBt=fxBl.getContext("2d");
 const RPE_NOTE_W_DESIGN=0.13175016*1350;   // size=1 音符在 1350×900 设计坐标系下的像素宽度
 const rpeNotePx=()=>RPE_NOTE_W_DESIGN*RPE_S*SETTINGS.noteScale;
 const CFG={
-  fallTime:3.2,pps:300,perfectSec:.06,goodSec:.18,missSec:.18,
-  hitRadius:110,noteW:110,noteH:22,flickMove:14
+  fallTime:3.2,pps:300,perfectSec:.09,goodSec:.28,missSec:.28,
+  hitRadius:110,noteW:110,noteH:22,flickMove:11
 };
 function noteW(){return CFG.noteW*SETTINGS.noteScale;}
 function noteH(){return CFG.noteH*SETTINGS.noteScale;}
@@ -360,7 +359,7 @@ function resize(){
   mctx.setTransform(DPR,0,0,DPR,0,0);
   applySpeed();
   RPE_S=H/900;
-  CFG.hitRadius=Math.round(Math.min(W,H)*0.135);
+  CFG.hitRadius=Math.round(Math.min(W,H)*0.16);
   CFG.noteW=Math.round(Math.max(84,Math.min(140,W*0.075)));
   CFG.noteH=Math.max(18,Math.min(28,Math.round(H*0.022)));
 }
@@ -915,7 +914,7 @@ function judgeFlick(n,f){
   n.done=true;S.judged++;comboAdd();S.perfect++;if(f)f.moved=false;
   const w=noteWorld(n,S.time);showJudge("FLICK","#ff3355","PERFECT","#ff8095");if(!playSkin('flick'))beep(720,.1,"sawtooth",.07);burst(w.ax,w.ay,"#ff3355",10);spawnHitFx(n,w,"#ff3355");
 }
-const HOLD_GRACE=.21;   // 长条手指短暂离开的宽限时间(秒)，避免线移动/多押换手/掉帧时误断
+const HOLD_GRACE=.32;   // 长条手指短暂离开的宽限时间(秒)，避免线移动/多押换手/掉帧时误断
 function startHold(n,quality){
   n.holding=true;n.finger=null;n.headQ=quality;n.lastHold=judgeTime();
   if(!playSkin('hold'))beep(quality==="perfect"?880:660,.07,"sine",.07);

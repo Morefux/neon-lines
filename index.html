@@ -162,9 +162,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   </div>
   <button class="btn" id="startBtn">开 始</button>
   <button class="btn ghost" id="openSetBtn">设 置</button>
-  <button class="btn ghost mini" id="verToggleBtn" style="margin-top:10px;opacity:.6">切换到 Beta 版</button>
+  <a class="btn ghost mini" href="beta.html" style="display:inline-block;text-decoration:none;margin-top:10px;opacity:.85">切换到 Beta 版</a>
 </div>
-<script>(function(){var b=document.getElementById("verToggleBtn");if(!b)return;function go(e){if(e)e.preventDefault();try{if(e&&e.stopPropagation)e.stopPropagation();}catch(_){}location.href="beta.html";}b.addEventListener("pointerdown",go);b.addEventListener("click",go);})();</script>
 
 <!-- 设置界面 -->
 <div class="overlay" id="settingsScreen">
@@ -267,8 +266,8 @@ function saveSet(){try{const o={};for(const k of PERSIST_KEYS)o[k]=SETTINGS[k];
 const canvas=document.getElementById("gameCanvas"),ctx=canvas.getContext("2d");
 let W=0,H=0,DPR=1;
 const CFG={
-  fallTime:3.2,pps:300,perfectSec:.06,goodSec:.18,missSec:.18,
-  hitRadius:110,noteW:110,noteH:22,flickMove:14
+  fallTime:3.2,pps:300,perfectSec:.09,goodSec:.28,missSec:.28,
+  hitRadius:110,noteW:110,noteH:22,flickMove:11
 };
 function noteW(){return CFG.noteW*SETTINGS.noteScale;}
 function noteH(){return CFG.noteH*SETTINGS.noteScale;}
@@ -280,7 +279,7 @@ function resize(){
   canvas.style.width=W+"px";canvas.style.height=H+"px";
   ctx.setTransform(DPR,0,0,DPR,0,0);
   applySpeed();
-  CFG.hitRadius=Math.round(Math.min(W,H)*0.135);
+  CFG.hitRadius=Math.round(Math.min(W,H)*0.16);
   CFG.noteW=Math.round(Math.max(84,Math.min(140,W*0.075)));
   CFG.noteH=Math.max(18,Math.min(28,Math.round(H*0.022)));
 }
@@ -444,7 +443,7 @@ function judgeFlick(n,f){
   n.done=true;S.judged++;comboAdd();S.perfect++;if(f)f.moved=false;
   const w=noteWorld(n,S.time);showJudge("FLICK","#ff3355","PERFECT","#ff8095");beep(720,.1,"sawtooth",.07);burst(w.ax,w.ay,"#ff3355",10);
 }
-const HOLD_GRACE=.21;   // 长条手指短暂离开的宽限时间(秒)，避免线移动/多押换手/掉帧时误断
+const HOLD_GRACE=.32;   // 长条手指短暂离开的宽限时间(秒)，避免线移动/多押换手/掉帧时误断
 function startHold(n,quality){
   n.holding=true;n.finger=null;n.headQ=quality;n.lastHold=judgeTime();
   beep(quality==="perfect"?880:660,.07,"sine",.07);
