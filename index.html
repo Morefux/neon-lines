@@ -53,7 +53,7 @@ canvas{display:block;position:absolute;inset:0}
 #judge.pop{animation:judgePop .55s ease-out forwards}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 body.shake{animation:shake .22s ease}
-.overlay{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(130% 100% at 50% 0%,#131331 0%,#06060e 72%);transition:opacity .35s;text-align:center;padding:20px}
+.overlay{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(130% 100% at 50% 0%,#131331 0%,#06060e 72%);transition:opacity .35s;text-align:center;padding:20px;-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .overlay.hide{opacity:0;pointer-events:none}
 #result{display:none}
 .title{font-size:clamp(42px,7vw,68px);font-weight:900;letter-spacing:2px;font-style:italic;font-family:Georgia,"PingFang SC","Times New Roman",serif;
@@ -528,7 +528,7 @@ function onMove(e){if(!S.playing||SETTINGS.autoplay)return;e.preventDefault();  
   for(const t of e.changedTouches){const f=S.fingers.get(t.identifier);if(!f)continue;
     f.x=t.clientX;f.y=t.clientY;
     if(Math.hypot(f.x-f.lx,f.y-f.ly)>=CFG.flickMove)f.moved=true;}}
-function onEnd(e){if(e.cancelable)e.preventDefault();
+function onEnd(e){if(S.playing&&e.cancelable)e.preventDefault();
   for(const t of e.changedTouches)S.fingers.delete(t.identifier);}
 document.addEventListener("touchstart",onStart,{passive:false});
 document.addEventListener("touchmove",onMove,{passive:false});
@@ -636,7 +636,7 @@ function draw(){
   const rg=ctx.createRadialGradient(W/2,H*.4,50,W/2,H*.4,DIAG);
   rg.addColorStop(0,anomaly?"rgba(74,20,64,.4)":"rgba(30,34,74,.35)");rg.addColorStop(1,"rgba(6,6,14,0)");
   ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
-  for(const line of CHART?CHART.lines:[]){
+  for(const line of (S.playing&&CHART)?CHART.lines:[]){
     const L=lineAt(line,S.time);
     if(L.alpha<=0.02)continue;
     let lineColor="#00eeff";
@@ -917,6 +917,15 @@ window.addEventListener("resize",()=>{if(settingsScreen.classList.contains("show
 CHART=buildChart();
 syncSetUI();
 deriveWhiteRank(RANK_IMG.V).then(u=>{if(u){V_WHITE_URI=u;RANK_IMG.Vw=u;}});
+
+/* 锚点跳转：WebView 内合成 click 可能被触摸逻辑吞掉，pointerdown 直接导航，原生 href 兜底 */
+document.querySelectorAll('a[href]').forEach(function(a){
+  a.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    var href=a.getAttribute('href');
+    if(href) window.location.href=href;
+  });
+});
 requestAnimationFrame(loop);
 </script>
 </body>
